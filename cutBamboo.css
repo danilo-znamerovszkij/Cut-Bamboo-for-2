@@ -1,0 +1,17 @@
+body {
+    padding: 0;
+    margin: 0;
+}
+
+#cutbamboo {
+    margin: auto;
+    display: table;
+}
+
+#rules {
+    height: 40px;
+    background-color: rgb(179, 174, 174);
+    color: white;
+    font-size: 20px;
+    text-align: center;
+}
