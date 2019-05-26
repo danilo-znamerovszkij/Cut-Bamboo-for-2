@@ -211,7 +211,7 @@ gameState.main.prototype = {
                 GAME_START = true;
             }
 
-            var isClick = action instanceof Phaser.Pointer;
+
 
             //actions for rat
             if (action == 'left') {
@@ -494,7 +494,7 @@ gameState.main.prototype = {
         }
     },
 
-    createSpritesNumbers: function(number, imgRef, posY, alpha, player = "0") {
+    createSpritesNumbers: function(number, img, posY, alpha, player = "0") {
 
         var digits = number.toString().split('');
         var widthNumbers = 0;
@@ -506,7 +506,7 @@ gameState.main.prototype = {
             var spaceBetweenNumbers = 0;
             if (i > 0)
                 spaceBetweenNumbers = 5;
-            var spriteNumber = game.add.sprite(widthNumbers + spaceBetweenNumbers, posY, imgRef);
+            var spriteNumber = game.add.sprite(widthNumbers + spaceBetweenNumbers, posY, img);
             spriteNumber.alpha = alpha;
             spriteNumber.animations.add('number');
             spriteNumber.animations.frame = +digits[i];
