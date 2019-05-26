@@ -93,7 +93,7 @@ gameState.main.prototype = {
         this.sstump.x = 1720;
         this.sstump.y = 1394;
         // construction of the trunks
-        this.HEIGHT_TRUNK = 243;
+        this.TRUNK_HEIGHT = 243;
         this.constructTree();
         //variable indicating if the tree can be cut by a character
         this.canCut = true;
@@ -369,7 +369,7 @@ gameState.main.prototype = {
 
         var that = this;
         this.tree.forEach(function(trunk) {
-            var tween = game.add.tween(trunk).to({ y: trunk.y + that.HEIGHT_TRUNK }, 100, Phaser.Easing.Linear.None, true);
+            var tween = game.add.tween(trunk).to({ y: trunk.y + that.TRUNK_HEIGHT }, 100, Phaser.Easing.Linear.None, true);
             tween.onComplete.add(function() {
                 // Une fois que l'arbre à fini son animation, on redonne la possibilité de couper
                 that.canCut = true;
@@ -411,7 +411,7 @@ gameState.main.prototype = {
 
         var sthat = this;
         this.secondTree.forEach(function(strunk) {
-            var stween = game.add.tween(strunk).to({ y: strunk.y + sthat.HEIGHT_TRUNK }, 100, Phaser.Easing.Linear.None, true);
+            var stween = game.add.tween(strunk).to({ y: strunk.y + sthat.TRUNK_HEIGHT }, 100, Phaser.Easing.Linear.None, true);
             stween.onComplete.add(function() {
                 sthat.canCut = true;
             }, sthat);
@@ -423,7 +423,7 @@ gameState.main.prototype = {
         this.tree = game.add.group();
         // 2 first simple branches
         this.tree.create(37, 1151, 'trunk1');
-        this.tree.create(37, 1151 - this.HEIGHT_TRUNK, 'trunk2');
+        this.tree.create(37, 1151 - this.TRUNK_HEIGHT, 'trunk2');
 
         // Make the rest of it
         for (var i = 0; i < 4; i++) {
@@ -434,7 +434,7 @@ gameState.main.prototype = {
         this.secondTree = game.add.group();
         // 2 first simple branches
         this.secondTree.create(1400, 1151, 'strunk1');
-        this.secondTree.create(1400, 1151 - this.HEIGHT_TRUNK, 'strunk2');
+        this.secondTree.create(1400, 1151 - this.TRUNK_HEIGHT, 'strunk2');
 
         // Make the rest of it
         for (var i = 0; i < 4; i++) {
@@ -451,11 +451,11 @@ gameState.main.prototype = {
         if (branchs.indexOf(this.tree.getAt(this.tree.length - 1).key) == -1) {
             // place branches in random order
             if (Math.random() * 4 <= 1)
-                this.tree.create(37, this.stump.y - this.HEIGHT_TRUNK * (this.tree.length + 1), trunks[Math.floor(Math.random() * 2)]);
+                this.tree.create(37, this.stump.y - this.TRUNK_HEIGHT * (this.tree.length + 1), trunks[Math.floor(Math.random() * 2)]);
             else
-                this.tree.create(37, this.stump.y - this.HEIGHT_TRUNK * (this.tree.length + 1), branchs[Math.floor(Math.random() * 2)]);
+                this.tree.create(37, this.stump.y - this.TRUNK_HEIGHT * (this.tree.length + 1), branchs[Math.floor(Math.random() * 2)]);
         } else
-            this.tree.create(37, this.stump.y - this.HEIGHT_TRUNK * (this.tree.length + 1), trunks[Math.floor(Math.random() * 2)]);
+            this.tree.create(37, this.stump.y - this.TRUNK_HEIGHT * (this.tree.length + 1), trunks[Math.floor(Math.random() * 2)]);
 
     },
 
@@ -465,11 +465,11 @@ gameState.main.prototype = {
 
         if (sbranchs.indexOf(this.secondTree.getAt(this.secondTree.length - 1).key) == -1) {
             if (Math.random() * 4 <= 1)
-                this.secondTree.create(1400, this.sstump.y - this.HEIGHT_TRUNK * (this.secondTree.length + 1), strunks[Math.floor(Math.random() * 2)]);
+                this.secondTree.create(1400, this.sstump.y - this.TRUNK_HEIGHT * (this.secondTree.length + 1), strunks[Math.floor(Math.random() * 2)]);
             else
-                this.secondTree.create(1400, this.sstump.y - this.HEIGHT_TRUNK * (this.secondTree.length + 1), sbranchs[Math.floor(Math.random() * 2)]);
+                this.secondTree.create(1400, this.sstump.y - this.TRUNK_HEIGHT * (this.secondTree.length + 1), sbranchs[Math.floor(Math.random() * 2)]);
         } else
-            this.secondTree.create(1400, this.sstump.y - this.HEIGHT_TRUNK * (this.secondTree.length + 1), strunks[Math.floor(Math.random() * 2)]);
+            this.secondTree.create(1400, this.sstump.y - this.TRUNK_HEIGHT * (this.secondTree.length + 1), strunks[Math.floor(Math.random() * 2)]);
 
     },
 
