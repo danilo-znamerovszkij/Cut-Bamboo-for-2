@@ -4,18 +4,17 @@
  * @description a game for 2 players
  */
 
-// Initialasing the main variables 
-var GAME_START = false;
-var GAME_OVER = false;
-
 //game rules
 $('#rules').html("<span>For left player: <b>←A  S→ </b>For right player: <b>←J  K→ </b></span>");
 
+// Initialasing the main variables 
+var GAME_START = false;
+var GAME_OVER = false;
 // Set the relative dimensions
 const width = 2496;
 const height = 1775;
 
-// Phaser
+// Phaser object of Game with given parameters
 var game = new Phaser.Game(width, height, Phaser.AUTO, 'cutbamboo');
 game.transparent = true;
 
@@ -42,6 +41,7 @@ gameState.load.prototype = {
         game.load.image('strunk1', 'img/trunk1.png');
         game.load.image('strunk2', 'img/trunk2.png');
         game.load.image('sbranchLeft', 'img/branch1.png');
+        //a variation of a branch for the second bamboo
         game.load.image('sbranchRight', 'img/branch2-2.png');
         game.load.image('sstump', 'img/stump.png');
         // numbers
@@ -102,22 +102,22 @@ gameState.main.prototype = {
         // The rat
         this.samuraiRat = game.add.sprite(0, 1070, 'samuraiRat');
 
-        this.samuraiRat.animations.add('breath', [0, 1]);
+        this.samuraiRat.animations.add('beStill', [0, 1]);
 
         this.samuraiRat.animations.add('cut', [1, 2, 3, 4]);
 
-        this.samuraiRat.animations.play('breath', 3, true);
+        this.samuraiRat.animations.play('beStill', 3, true);
 
         this.samuraiRatPosition = 'left';
 
         // The regular farmer
         this.farmer = game.add.sprite(1300, 1070, 'farmer');
 
-        this.farmer.animations.add('breath', [0, 1]);
+        this.farmer.animations.add('beStill', [0, 1]);
 
         this.farmer.animations.add('cut', [1, 2, 3, 4]);
 
-        this.farmer.animations.play('breath', 3, true);
+        this.farmer.animations.play('beStill', 3, true);
 
         this.farmerPosition = 'sleft';
 
@@ -126,15 +126,17 @@ gameState.main.prototype = {
 
         //  SCORE OF EVERYONE
         this.currentScore = 0;
+
         ///add the initial score
-        var spriteScoreNumber = game.add.sprite(game.width / 2, 440, 'numbers');
+        var spriteScoreNumber = game.add.sprite(game.width - 570, 1300, 'numbers');
         spriteScoreNumber.x -= spriteScoreNumber.width / 2;
         this.spritesScoreNumbers = new Array();
         this.spritesScoreNumbers.push(spriteScoreNumber);
 
         // farmer score
         this.scurrentScore = 0;
-        var sspriteScoreNumber = game.add.sprite(game.width / 2, 440, 'numbers');
+
+        var sspriteScoreNumber = game.add.sprite(520, 1300, 'numbers');
         sspriteScoreNumber.animations.add('number');
         sspriteScoreNumber.animations.frame = this.scurrentScore;
         sspriteScoreNumber.x -= sspriteScoreNumber.width / 2;
@@ -170,12 +172,16 @@ gameState.main.prototype = {
         this.spritesLevelNumbers = new Array();
         this.spritesLevelNumbers.push(spriteLevelNumber);
 
+        leftKey = game.input.keyboard.addKey(Phaser.Keyboard.A);
+        rightKey = game.input.keyboard.addKey(Phaser.Keyboard.S);
+        sleftKey = game.input.keyboard.addKey(Phaser.Keyboard.J);
+        srightKey = game.input.keyboard.addKey(Phaser.Keyboard.K);
     },
 
     update: function() {
         if (GAME_START) {
             if (this.timeBarWidth > 0) {
-                this.timeBarWidth -= (1); //approx 15s, 0.4 = 30s
+                this.timeBarWidth -= 1; //approx 15s, 0.4 = 30s
                 var cropRect = new Phaser.Rectangle(0, 0, this.timeBarWidth, this.timeBar.height);
                 this.timeBar.crop(cropRect);
                 this.timeBar.updateCrop();
@@ -188,22 +194,21 @@ gameState.main.prototype = {
         // if game is not over yet
         if (!GAME_OVER) {
             // Detect the keys
-            if (game.input.keyboard.justPressed(Phaser.Keyboard.A))
+
+            if (leftKey.isDown)
                 this.listener('left');
-            else if (game.input.keyboard.justPressed(Phaser.Keyboard.S)) {
+            else if (rightKey.isDown)
                 this.listener('right');
-            }
-            //define second left and second right
-            if (game.input.keyboard.justPressed(Phaser.Keyboard.J))
+
+            if (sleftKey.isDown)
                 this.listener('sleft');
-            else if (game.input.keyboard.justPressed(Phaser.Keyboard.K)) {
+            else if (srightKey.isDown)
                 this.listener('sright');
-            }
+
         }
     },
 
     listener: function(action) {
-
         if (this.canCut) {
 
             // The first init
@@ -220,12 +225,12 @@ gameState.main.prototype = {
                 this.samuraiRat.x = 0;
                 this.samuraiRatPosition = 'left';
                 //breathe animation
-                this.samuraiRat.animations.stop('breath', true);
+                this.samuraiRat.animations.stop('beStill', true);
                 //3 images per sec
                 var animationCut = this.samuraiRat.animations.play('cut', 15);
 
                 animationCut.onComplete.add(function() {
-                    this.samuraiRat.animations.play('breath', 3, true);
+                    this.samuraiRat.animations.play('beStill', 3, true);
                 }, this);
 
                 var nameTrunkToCut = this.tree.getAt(0).key;
@@ -241,10 +246,10 @@ gameState.main.prototype = {
                 this.samuraiRatPosition = 'right';
 
 
-                this.samuraiRat.animations.stop('breath', true);
+                this.samuraiRat.animations.stop('beStill', true);
                 var animationCut = this.samuraiRat.animations.play('cut', 15);
                 animationCut.onComplete.add(function() {
-                    this.samuraiRat.animations.play('breath', 3, true);
+                    this.samuraiRat.animations.play('beStill', 3, true);
                 }, this);
                 var nameTrunkToCut = this.tree.getAt(0).key;
                 var nameTrunkJustAfter = this.tree.getAt(1).key;
@@ -257,10 +262,10 @@ gameState.main.prototype = {
                 this.farmerPosition = 'sleft';
 
                 //animation
-                this.farmer.animations.stop('breath', true);
+                this.farmer.animations.stop('beStill', true);
                 var sanimationCut = this.farmer.animations.play('cut', 15);
                 sanimationCut.onComplete.add(function() {
-                    this.farmer.animations.play('breath', 3, true);
+                    this.farmer.animations.play('beStill', 3, true);
                 }, this);
                 var snameTrunkToCut = this.secondTree.getAt(0).key;
                 var snameTrunkJustAfter = this.secondTree.getAt(1).key;
@@ -274,12 +279,12 @@ gameState.main.prototype = {
                 this.farmerPosition = 'sright';
 
 
-                this.farmer.animations.stop('breath', true);
+                this.farmer.animations.stop('beStill', true);
 
                 var sanimationCut = this.farmer.animations.play('cut', 15);
 
                 sanimationCut.onComplete.add(function() {
-                    this.farmer.animations.play('breath', 3, true);
+                    this.farmer.animations.play('beStill', 3, true);
                 }, this);
 
 
@@ -294,11 +299,11 @@ gameState.main.prototype = {
                 // Game Over
                 this.death("1");
             } else if (action == "left" || action == "right") {
-                this.samuraiRat.animations.stop('breath', true);
+                this.samuraiRat.animations.stop('beStill', true);
 
                 var animationCut = this.samuraiRat.animations.play('cut', 15);
                 animationCut.onComplete.add(function() {
-                    this.samuraiRat.animations.play('breath', 3, true);
+                    this.samuraiRat.animations.play('beStill', 3, true);
                 }, this);
 
                 this.cutTrunk();
@@ -316,10 +321,10 @@ gameState.main.prototype = {
                 //game over for the second player
                 this.death("", "1");
             } else if (action == "sleft" || action == "sright") {
-                this.farmer.animations.stop('breath', true);
+                this.farmer.animations.stop('beStill', true);
                 var sanimationCut = this.farmer.animations.play('cut', 15);
                 sanimationCut.onComplete.add(function() {
-                    this.farmer.animations.play('breath', 3, true);
+                    this.farmer.animations.play('beStill', 3, true);
                 }, this);
                 this.cutSTrunk();
 
@@ -328,7 +333,7 @@ gameState.main.prototype = {
                     // Game Over
                     this.death("", "1");
                 }
-                console.log(snameTrunkToCut + "to cut" + "pos" + snameTrunkJustAfter + "just after");
+                //console.log(snameTrunkToCut + "to cut" + "pos" + snameTrunkJustAfter + "just after");
 
             }
         }
@@ -340,6 +345,7 @@ gameState.main.prototype = {
         // Increment score
         this.increaseScore("1");
 
+        //add more trunk
         this.addTrunk();
 
         var trunkCut = game.add.sprite(37, 1151, this.tree.getAt(0).key);
@@ -347,21 +353,21 @@ gameState.main.prototype = {
 
         //enable the phaser physics
         game.physics.enable(trunkCut, Phaser.Physics.ARCADE);
-        trunkCut.anchor.setTo(0.5, 0.5);
+        trunkCut.anchor.setTo(0.2, 0.1);
         trunkCut.x += trunkCut.width / 2;
         trunkCut.y += trunkCut.height / 2;
 
         var angle = 0;
         //how the chunck goes
         if (this.samuraiRatPosition == 'left') {
-            trunkCut.body.velocity.x = 1300;
-            angle = -400;
+            trunkCut.body.velocity.x = 1000;
+            angle = -300;
         } else {
-            trunkCut.body.velocity.x = -1300;
-            angle = 400;
+            trunkCut.body.velocity.x = -1000;
+            angle = 200;
         }
-        trunkCut.body.velocity.y = -800;
-        trunkCut.body.gravity.y = 2000;
+        trunkCut.body.velocity.y = -600;
+        trunkCut.body.gravity.y = 3500;
 
         game.add.tween(trunkCut).to({ angle: trunkCut.angle + angle }, 1000, Phaser.Easing.Linear.None, true);
 
@@ -371,7 +377,6 @@ gameState.main.prototype = {
         this.tree.forEach(function(trunk) {
             var tween = game.add.tween(trunk).to({ y: trunk.y + that.TRUNK_HEIGHT }, 100, Phaser.Easing.Linear.None, true);
             tween.onComplete.add(function() {
-                // Une fois que l'arbre à fini son animation, on redonne la possibilité de couper
                 that.canCut = true;
             }, that);
         });
@@ -390,20 +395,20 @@ gameState.main.prototype = {
 
         // second tree
         game.physics.enable(strunkCut, Phaser.Physics.ARCADE);
-        strunkCut.anchor.setTo(0.5, 0.5);
+        strunkCut.anchor.setTo(0.3, 0.4);
         strunkCut.x += strunkCut.width / 2;
         strunkCut.y += strunkCut.height / 2;
 
         var angle = 0;
         if (this.farmerPosition == 'sleft') {
-            strunkCut.body.velocity.x = 1300;
-            angle = -400;
+            strunkCut.body.velocity.x = 1400;
+            angle = -300;
         } else {
-            strunkCut.body.velocity.x = -1300;
-            angle = 400;
+            strunkCut.body.velocity.x = -1200;
+            angle = 450;
         }
-        strunkCut.body.velocity.y = -800;
-        strunkCut.body.gravity.y = 2000;
+        strunkCut.body.velocity.y = -600;
+        strunkCut.body.gravity.y = 3900;
 
         game.add.tween(strunkCut).to({ angle: strunkCut.angle + angle }, 1000, Phaser.Easing.Linear.None, true);
 
@@ -551,16 +556,16 @@ gameState.main.prototype = {
                 this.sspritesLevelNumbers[i].x = this.intituleLevel.width + 20 + this.sspritesLevelNumbers[i - 1].width;
         }
         //draw or victory
-        var levelGroup = game.add.group();
+        var congrats = game.add.group();
         if (player1 == player2) {
-            levelGroup.add(this.draw);
+            congrats.add(this.draw);
         } else {
-            levelGroup.add(this.intituleLevel);
+            congrats.add(this.intituleLevel);
         }
 
         for (var i = 0; i < this.spritesLevelNumbers.length; i++)
-            levelGroup.add(this.spritesLevelNumbers[i]);
-        levelGroup.x = game.width / 2 - levelGroup.width / 2;
+            congrats.add(this.spritesLevelNumbers[i]);
+        congrats.x = game.width / 2 - congrats.width / 2;
 
         for (var i = 0; i < this.spritesLevelNumbers.length; i++) {
             game.add.tween(this.spritesLevelNumbers[i]).to({ alpha: 1 }, 300, Phaser.Easing.Linear.None, true);
@@ -574,7 +579,7 @@ gameState.main.prototype = {
         for (var i = 0; i < this.sspritesLevelNumbers.length; i++) {
             game.add.tween(this.sspritesLevelNumbers[i]).to({ alpha: 1 }, 300, Phaser.Easing.Linear.None, true);
         }
-        game.add.tween(this.intituleLevel).to({ alpha: 1 }, 300, Phaser.Easing.Linear.None, true);
+        //game.add.tween(this.intituleLevel).to({ alpha: 1 }, 300, Phaser.Easing.Linear.None, true);
 
         var that = this;
 
@@ -609,7 +614,7 @@ gameState.main.prototype = {
                 that.rip.x = (this.samuraiRatPosition == 'left') ? (this.samuraiRat.x + 50) : (this.samuraiRat.x + 200);
                 that.rip.y = this.samuraiRat.y + this.samuraiRat.height - that.rip.height;
 
-                setTimeout(function() { that.gameFinish() }, 2000);
+                setTimeout(function() { that.gameFinish() }, 3000);
             }, this);
         }
         if (player2 == 1) {
@@ -631,7 +636,7 @@ gameState.main.prototype = {
                 that.rip.x = (this.farmerPosition == 'left') ? (this.farmer.x + 50) : (this.farmer.x + 200);
                 that.rip.y = this.farmer.y + this.farmer.height - that.rip.height;
 
-                setTimeout(function() { that.gameFinish() }, 2000);
+                setTimeout(function() { that.gameFinish() }, 3000);
             }, this);
 
         }
