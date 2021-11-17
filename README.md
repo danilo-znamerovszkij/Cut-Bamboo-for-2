@@ -2,4 +2,4 @@
 
 
 
-## This is a browser game for two players
+## A multiplayer online game
